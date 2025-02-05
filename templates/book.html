@@ -1,0 +1,137 @@
+<!-- book.html (jobDemo) -->
+{% extends "base.html" %}
+{% block title %}僕の部屋{% endblock %}
+{%block content %}
+<div id="main">
+<div id="left_side" style="float:left">
+<h2><p style="color:blue">目的: 顯示網路書店的排行榜</p></h2>
+<h4><p style="color:blue">說明:</p></h4>
+<blockquote style="color:blue">
+    因為有閱讀的習慣,所以建構一個獲取<br>
+    特定種類書籍排行榜的資訊.<br><br>
+    本頁功能利用後端python爬蟲,抓取<br>
+    博客來與誠品書店書籍排行榜,<br>
+    而前端利用HTML,CSS,JavaScript<br>
+    布置並建構簡單的顯示功能.<br><br>
+    頁面開啟時,會彈跳出JavaScript的<br>
+    資訊視窗,提供該排行榜前三名書籍資訊.<br>
+
+</blockquote>
+<h4><p style="color:blue">問題:</p></h4>
+<blockquote style="color:blue">
+    兩個網站似乎有佈置反爬蟲機制,<br>
+    因此若從原始碼查看,部分功能被<br>
+    關起來.<br><br>
+    "Top100內的心理學與商業財務書籍"<br>
+    原本要提供作者、名次等資訊,但爬取<br>
+    資料時,超過一定時間會被切斷連線,<br>
+    因此暫時凍結此功能.<br><br>
+    而誠品書店的功能,佈署至heroku之<br>
+    後就無法顯示,雖曾試圖修改爬蟲的<br>
+    proxies但依舊無法解決問題,<br>
+    唯該功能,在下載原始碼之後,可以<br>
+    在私人的電腦上運行,也因此現在<br>
+    程式碼保留,但在網頁上隱藏起來.<br>
+</blockquote>
+<h4><p style="color:blue">下載原始碼</p></h4>
+<blockquote style="color:blue">
+<h4><a href="https://drive.google.com/drive/folders/1h-po9enjLX5mBaCMhGIqk8w3BIr5Je7p?usp=sharing" target="_blank">點我下載</a></h4>
+</blockquote>
+</div>
+ <div style="float:right">
+    <nav>
+    <ul style="float:right;">
+    <li><a href="{% url 'rank_no' 1 %}">電子書30日暢銷榜</a></li>
+        <br>
+    <li><a href="{% url 'rank_no' 2 %}">實體書30日暢銷榜</a></li>
+        <br>
+    <li><a href="{% url 'rank_no' 3 %}">實體新書30日暢銷榜</a></li>
+        <br>
+    <li><a href="{% url 'rank_no' 4 %}">商業理財30日暢銷榜</a></li>
+        <br>
+    <li><a href="{% url 'rank_no' 5 %}">商業理財新書30日暢銷榜</a></li>
+        <br>
+    <li><a href="{% url 'rank_no' 6 %}">心理學30日暢銷榜</a></li>
+        <br>
+    <li><a href="{% url 'rank_no' 7 %}">心理學新書30日暢銷榜</a></li>
+        <br>
+        <li><a href="{% url 'rank_no' 8 %}">Top100內的心理學與商業財務書籍</a></li>
+        <br>
+        <li><a href="{% url 'rank_no' 9 %}" style="display:none">誠品TOP10心理學排行榜</a></li>
+        <br>
+        <li><a href="{% url 'rank_no' 10 %}" style="display:none">誠品TOP10財經排行榜</a></li>
+</ul>
+</nav>
+            </div>
+        </div>
+    <p><center><h2>{{downloadTime}}</h2></center></p>
+    <br>
+    <p><center><h1 style="color:brown">{{title}}</h1></center></p>
+    <br>
+    {% if marker == '1' %}
+    <p><h3><center>{{message}}</center></h3></p>
+        <br>
+    <table border="1">
+        {% for b in withinTop100bookList %}
+        <tr id="top100">
+            <td><center>{{b}}</center></td>
+        </tr>
+        {% endfor %}
+</table>
+    <style>
+        #top100:nth-child(odd) {background: #DBFF33}
+    </style>
+        {% elif marker == '2' %}
+        <h2><center>{{titleP}}</center></h2>
+        <br>
+    <table align="center" border="1">
+        {% for c in rankP %}
+        <tr id="top10_P">
+            <td><h2><center>{{c.title}}</center></h2></td>
+    <td><center><a href="{{c.url}}" target="_blank">連結</a></center></tr>
+        {% endfor %}
+        </table>
+    <style>
+        #top10_P:nth-child(odd) {background: #DBFF33}
+    </style>
+    {% elif marker == '3' %}
+        <p><h2><center>{{titleF}}</center></h2></p>
+        <br>
+    <table align="center" border="1">
+        {% for p in rankF %}
+        <tr id="top10_F">
+            <td><center>{{p.title}}</center></td>
+            <td><center><a href="{{p.url}}" target="_blank">連結</a></center></td></tr>
+        {% endfor %}
+        </table>
+    <style>
+        #top10_F:nth-child(odd) {background: #DBFF33}
+    </style>
+        {% else %}
+        <script>
+            var m1="";
+            var message = "";
+            function test(message){
+                alert(message);
+    }
+    </script>
+    <table align="center" border="1">
+    {% for b in bookTop100 %}
+    <tr><td style="background-color:#33FFAD">{{b.labRank}}{{b.Num}}</td>
+    <td rowspan='3'><a href="{{b.網址}}" target="_blank">連結</a></td></tr>
+    <tr><td>{{b.labTitle}}{{b.bookTitle}}</td></tr>
+    <tr><td>{{b.labAuth}}: {{b.author}}</td>
+        <script>
+            m1 = "{{b.Num}}";
+            if (m1 == "1" || m1=="2" || m1=="3"){
+                message+=m1+": {{b.bookTitle}}"+"\n\n";
+            }
+</script>
+    {% endfor %}
+        </table>
+        <script>
+        var message2 = 'Top 3: ' +'\n' + message;
+    test(message2);
+    </script>
+        {% endif %}
+{% endblock %}
